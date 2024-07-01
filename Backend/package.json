@@ -1,0 +1,19 @@
+{
+    "name": "Impresiones Avila",
+    "version": "1.0.0",
+    "description": "Backend server using Node.js and Express with MySQL database",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js",
+      "dev": "nodemon index.js"   
+    },
+    "dependencies": {
+      "express": "^4.17.1",
+      "mysql2": "^2.3.0",          
+      "sequelize": "^6.10.3"        
+    },
+    "devDependencies": {
+      "nodemon": "^2.0.12"          
+    }
+  }
+  
