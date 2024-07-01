@@ -1,5 +1,4 @@
 Para el backend
-Paso 1: Configuración del Proyecto
 1.Crear un directorio para el proyecto y configurar Node.js:
 
 mkdir backend
