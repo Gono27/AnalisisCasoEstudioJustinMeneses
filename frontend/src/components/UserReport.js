@@ -1,9 +1,9 @@
+// src/components/UserReport.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Typography, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
 
-function UserList() {
+function UserReport() {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
@@ -12,20 +12,31 @@ function UserList() {
             .catch(error => console.error('Error fetching users:', error));
     }, []);
 
-    const handleDelete = (id) => {
-        axios.delete(`http://localhost:3001/users/${id}`)
-            .then(() => {
-                setUsers(users.filter(user => user.user_id !== id));
-            })
-            .catch(error => console.error('Error deleting user:', error));
+    const handleDownload = async () => {
+        try {
+            const response = await axios.get('http://localhost:3001/generate-user-report', {
+                responseType: 'blob',
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'user_report.pdf'); // or any other extension
+            document.body.appendChild(link);
+            link.click();
+        } catch (error) {
+            console.error('Error downloading the report:', error);
+        }
     };
 
     return (
         <Container maxWidth="lg">
             <Box mt={5}>
                 <Typography variant="h4" component="h1" gutterBottom>
-                    Usuarios
+                    Reporte de Usuarios
                 </Typography>
+                <Button variant="contained" color="primary" onClick={handleDownload} style={{ marginBottom: '20px' }}>
+                    Generar PDF
+                </Button>
                 <TableContainer component={Paper}>
                     <Table>
                         <TableHead>
@@ -33,8 +44,8 @@ function UserList() {
                                 <TableCell>ID</TableCell>
                                 <TableCell>Nombre de usuario</TableCell>
                                 <TableCell>Email</TableCell>
+                                <TableCell>Fecha de creación</TableCell>
                                 <TableCell>Rol</TableCell>
-                                <TableCell>Acciones</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -43,25 +54,8 @@ function UserList() {
                                     <TableCell>{user.user_id}</TableCell>
                                     <TableCell>{user.username}</TableCell>
                                     <TableCell>{user.email}</TableCell>
+                                    <TableCell>{user.created_at}</TableCell>
                                     <TableCell>{user.role}</TableCell>
-                                    <TableCell>
-                                        <Button
-                                            variant="outlined"
-                                            color="primary"
-                                            component={Link}
-                                            to={`/edit-user/${user.user_id}`}
-                                            style={{ marginRight: '10px' }}
-                                        >
-                                            Editar
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            color="secondary"
-                                            onClick={() => handleDelete(user.user_id)}
-                                        >
-                                            Eliminar
-                                        </Button>
-                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -72,4 +66,4 @@ function UserList() {
     );
 }
 
-export default UserList;
+export default UserReport;
